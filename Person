@@ -1,0 +1,271 @@
+package person;
+
+/*
+ * Copyright (c) 2013, Oracle and/or its affiliates. All rights reserved. Redistribution and use in
+ * source and binary forms, with or without modification, are permitted provided that the following
+ * conditions are met: - Redistributions of source code must retain the above copyright notice, this
+ * list of conditions and the following disclaimer. - Redistributions in binary form must reproduce
+ * the above copyright notice, this list of conditions and the following disclaimer in the
+ * documentation and/or other materials provided with the distribution. - Neither the name of Oracle
+ * or the names of its contributors may be used to endorse or promote products derived from this
+ * software without specific prior written permission. THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT
+ * HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+ * DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+ * INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED
+ * TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+ * SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ */
+
+import java.time.chrono.IsoChronology;
+import java.time.LocalDate;
+
+/**
+ * This is my Immutable Person class.
+ * 
+ * @author sugie
+ * @version 30 Oct 2018
+ */
+final public class Person
+    implements Comparable<Person>
+{
+
+    /**
+     * This is my enum constructor.
+     * 
+     * @author sugie
+     * @version 30 Oct 2018
+     */
+    public enum Sex
+    {
+        /**
+         * This is the male enum of gender.
+         */
+        MALE,
+        /**
+         * This is the female enum of gender.
+         */
+        FEMALE
+    }
+
+    private final String    name;
+    private final LocalDate birthday;
+    private final Sex       gender;
+    private final String    emailAddress;
+
+
+    /**
+     * Create a new Person object.
+     * 
+     * @param name
+     *            The name of the person.
+     * @param birthday
+     *            The birthday of the person.
+     * @param gender
+     *            The gender of the person.
+     * @param emailAddress
+     *            The email address of the person.
+     */
+    public Person(String name, LocalDate birthday, Sex gender, String emailAddress)
+    {
+        if (anyAreNull(name, birthday, gender, emailAddress))
+        {
+            throw new NullPointerException();
+        }
+        if (anyAreInvalid(name, birthday, emailAddress))
+        {
+            throw new IllegalArgumentException();
+        }
+
+        this.name = name;
+        this.birthday = birthday;
+        this.gender = gender;
+        this.emailAddress = emailAddress;
+    }
+
+
+    /**
+     * This is the any are invalid method.
+     * 
+     * @param name
+     *            The name of the person.
+     * @param birthday
+     *            The birthday of the person.
+     * @param emailAddress
+     *            The email address of the person.
+     * @return The valid variables.
+     */
+    private boolean anyAreInvalid(String name, LocalDate birthday, String emailAddress)
+    {
+        return name.equals("") || birthday.compareTo(IsoChronology.INSTANCE.date(1800, 1, 1)) < 0
+            || birthday.compareTo(IsoChronology.INSTANCE.dateNow()) > 0 || emailAddress.equals("")
+            || emailAddress.contains("@");
+    }
+
+
+    /**
+     * This is the are any null method.
+     * 
+     * @param name
+     *            The name of the person.
+     * @param birthday
+     *            The birthday of the person.
+     * @param gender
+     *            The gender of the person.
+     * @param emailAddress
+     *            The email address of the person.
+     * @return The non null variables.
+     */
+    private boolean anyAreNull(String name, LocalDate birthday, Sex gender, String emailAddress)
+    {
+        return name == null || birthday == null || gender == null || emailAddress == null;
+    }
+
+
+    /**
+     * Get the current value of name.
+     * 
+     * @return The value of name for this object.
+     */
+    public String getName()
+    {
+        return name;
+    }
+
+
+    /**
+     * Get the current value of birthday.
+     * 
+     * @return The value of birthday for this object.
+     */
+    public LocalDate getBirthday()
+    {
+        return birthday;
+    }
+
+
+    /**
+     * Get the current value of gender.
+     * 
+     * @return The value of gender for this object.
+     */
+    public Sex getGender()
+    {
+        return gender;
+    }
+
+
+    /**
+     * Get the current value of emailAddress.
+     * 
+     * @return The value of emailAddress for this object.
+     */
+    public String getEmailAddress()
+    {
+        return emailAddress;
+    }
+
+
+    /**
+     * Get the current age of the person.
+     * 
+     * @return The birthday in years.
+     */
+    public int getAge()
+    {
+        return birthday.until(IsoChronology.INSTANCE.dateNow()).getYears();
+    }
+
+
+    /**
+     * The toString
+     */
+    @Override
+    public String toString()
+    {
+        return "(" + name + ", " + birthday + ", " + gender + ", " + emailAddress + ")";
+    }
+
+
+    /**
+     * The hash code
+     */
+    @Override
+    public int hashCode()
+    {
+        final int prime = 31;
+        int result = 17;
+        result = prime * result + birthday.hashCode();
+        result = prime * result + emailAddress.hashCode();
+        result = prime * result + gender.hashCode();
+        result = prime * result + name.hashCode();
+        return result;
+    }
+
+
+    /**
+     * The equals method.
+     */
+    @Override
+    public boolean equals(Object obj)
+    {
+        if (this == obj)
+        {
+            return true;
+        }
+        if (obj == null)
+        {
+            return false;
+        }
+        if (!(obj instanceof Person))
+        {
+            return false;
+        }
+        Person that = (Person)obj;
+        if (!this.name.equals(that.name))
+        {
+            return false;
+        }
+        if (!this.birthday.equals(that.birthday))
+        {
+            return false;
+        }
+        if (this.gender != that.gender)
+        {
+            return false;
+        }
+        if (!this.emailAddress.equals(that.emailAddress))
+        {
+            return false;
+        }
+        return true;
+    }
+
+
+    /**
+     * The compare to method.
+     */
+    @Override
+    public int compareTo(Person that)
+    {
+        if (!this.name.equals(that.name))
+        {
+            return this.name.compareTo(that.name);
+        }
+        if (!this.birthday.equals(that.birthday))
+        {
+            return this.birthday.compareTo(that.birthday);
+        }
+        if (this.gender != that.gender)
+        {
+            return this.gender.compareTo(that.gender);
+        }
+        if (!this.emailAddress.equals(that.emailAddress))
+        {
+            return this.emailAddress.compareTo(that.emailAddress);
+        }
+        return 0;
+    }
+}
